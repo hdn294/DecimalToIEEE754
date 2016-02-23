@@ -470,6 +470,7 @@ public class ConvertorGUI extends JFrame implements ActionListener{
 		double aNumber = 0;
 		int anExponent = 0;
 		int i = 0;
+		Boolean isOne = false;
 
 		for (i = 0; i< EXPONENT_BITS.length();i++)
 		{
@@ -483,6 +484,7 @@ public class ConvertorGUI extends JFrame implements ActionListener{
 		if (anExponent != 0)
 		{
 			anExponent -= BIAS;
+			isOne = true;
 		}		
 		
 		if (anExponent >= Math.pow(2, EXPONENT_BITS.length() -1) && isMantissaZero())
@@ -507,6 +509,13 @@ public class ConvertorGUI extends JFrame implements ActionListener{
 			if (anExponent != 0)
 			{
 				aNumber = (1 + aNumber) * Math.pow(2, anExponent);
+			} 
+			else
+			{
+				if (isOne)
+					aNumber = 1;
+				else
+					aNumber = 0;
 			}
 	
 			if (SIGN_BIT.equals("1"))
