@@ -30,6 +30,7 @@ import javax.swing.border.EmptyBorder;
  * @author Huan Nguyen
  * 
  */
+
 public class ConvertorGUI extends JFrame implements ActionListener{
 	/**
 	 * 
@@ -79,6 +80,10 @@ public class ConvertorGUI extends JFrame implements ActionListener{
 	private static int CONVERT_TYPE = 0;
 	private static String A_BINARY_NUMBER ="", SIGN_BIT = "", EXPONENT_BITS = "", MANTISSA_BITS ="";
 
+	
+	/** Constructor method: initialize the window components
+	 * 
+	 * */
 	public ConvertorGUI() {
 		super("Decimal To IEEE 754 Convertor");
 		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
@@ -287,6 +292,9 @@ public class ConvertorGUI extends JFrame implements ActionListener{
 		contentPane.add(panResult);		
 	}
 
+	/** Update the result bits panel
+	 * 
+	 * */
 	private void updateDemonstrationPanel ()
 	{
 		panDemonstration.removeAll();
@@ -339,9 +347,10 @@ public class ConvertorGUI extends JFrame implements ActionListener{
 		panDemonstration.add(mantissaPanel);
 	}
 
-	/*
-	 * Convert decimal number to binary IEEE-754 Single OR Double Precision Float
-	 */
+	
+	/** Convert decimal number to binary IEEE-754 Single OR Double Precision Float
+	 * 
+	 * */
 	private void decimalToIEEE754() {
 		String signBits = "", exponentBits = "", mantissaBits = "";		
 		int anExponent = 0;
@@ -455,6 +464,8 @@ public class ConvertorGUI extends JFrame implements ActionListener{
 		A_BINARY_NUMBER = SIGN_BIT + EXPONENT_BITS + MANTISSA_BITS;		
 	}
 
+	/** Convert binary IEEE-754 Single OR Double Precision Float to a binary number
+	 * */
 	private void ieee754ToDecimal() {
 		double aNumber = 0;
 		int anExponent = 0;
@@ -468,11 +479,19 @@ public class ConvertorGUI extends JFrame implements ActionListener{
 				anExponent += Math.pow(2, EXPONENT_BITS.length() - i -1);
 			}
 		}
-		anExponent -= BIAS;
+		// case 0
+		if (anExponent != 0)
+		{
+			anExponent -= BIAS;
+		}		
 		
-		if (anExponent >= Math.pow(2, EXPONENT_BITS.length() -1))
+		if (anExponent >= Math.pow(2, EXPONENT_BITS.length() -1) && isMantissaZero())
 		{
 			JOptionPane.showMessageDialog(panInput, "This is a Infinity number!", "Infinity Number!",JOptionPane.INFORMATION_MESSAGE);			
+		}
+		else if (anExponent >= Math.pow(2, EXPONENT_BITS.length() -1) && !isMantissaZero())
+		{
+			JOptionPane.showMessageDialog(panInput, "This is not NaN!", "NaN",JOptionPane.INFORMATION_MESSAGE);			
 		}
 		else
 		{
@@ -484,7 +503,11 @@ public class ConvertorGUI extends JFrame implements ActionListener{
 					aNumber += Math.pow(2, -(i + 1));			
 				}
 			}
-			aNumber = (1 + aNumber) * Math.pow(2, anExponent);
+			// case 0
+			if (anExponent != 0)
+			{
+				aNumber = (1 + aNumber) * Math.pow(2, anExponent);
+			}
 	
 			if (SIGN_BIT.equals("1"))
 			{
@@ -499,6 +522,16 @@ public class ConvertorGUI extends JFrame implements ActionListener{
 
 		A_DECIMAL_NUMBER = aNumber;
 
+	}
+	
+	private Boolean isMantissaZero ()
+	{
+		for(int i = 0;i < MANTISSA_BITS.length(); i++)
+		{
+			if (MANTISSA_BITS.charAt(i) == '1')
+				return false;
+		}
+		return true;
 	}
 
 	private void checkInputData ()
@@ -539,6 +572,8 @@ public class ConvertorGUI extends JFrame implements ActionListener{
 		}
 	};
 
+	/** Data validation
+	 * */
 	private boolean isDataValid ()
 	{
 		Boolean isValid = true;
